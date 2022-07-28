@@ -6,7 +6,7 @@ var longestPalindrome = function (s) {
   let right = middle + 1;
 
   if (s.length === 1) return s;
-  
+
   for (let i = 0; i < s.length; i++) {
     const leftChar = s[left];
     const rightChar = s[right];

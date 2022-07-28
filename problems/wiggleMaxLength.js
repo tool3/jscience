@@ -4,6 +4,7 @@ function wiggleMaxLength(nums) {
   }
   let up = 1;
   let down = 1;
+  
   for (let i = 1; i < nums.length; i++) {
     if (nums[i] > nums[i - 1]) {
       up = down + 1;
