@@ -62,24 +62,71 @@ class Trie {
   hasWord(word, node = this.root) {
     const letter = word[0];
     const subword = word.substring(1);
-    if (!node.letters[letter]) return false;
+    if (!node.letters[letter] && !letter === '.') return false;
     if (subword.length) {
-      return this.hasWord(subword, node.letters[letter]);
+      if (letter === '.') {
+        const next = subword[1];
+        for (const foundLetter in node.letters[letter]) {
+          const target = node.letters[foundLetter];
+          const found = target && Object.keys(target.letters).indexOf(next) !== -1;
+          if (found) {
+            return this.hasWord(subword.substring(1), current);
+          }
+        }
+      } else {
+        return this.hasWord(subword, node.letters[letter]);
+      }
     } else {
-      return node.letters[letter].isWord || false;
+      return node.letters[letter]?.isWord;
     }
+  }
+
+  search(word) {
+    let current = this.root;
+    let currentWord = word;
+
+    while (current) {
+      const letter = currentWord[0];
+      if (!current.letters[letter] && !letter === '.') return false;
+      if (currentWord.length) {
+        // support wildcard
+        if (letter === '.') {
+          const next = currentWord[1];
+          for (const foundLetter in current.letters) {
+            const target = current.letters[foundLetter];
+            const found = target && Object.keys(target.letters).indexOf(next) !== -1;
+            if (found) {
+              currentWord = currentWord.substring(1);
+              current = target;
+            }
+          }
+        } else {
+          currentWord = currentWord.substring(1);
+          current = current.letters[letter];
+        }
+      } else {
+        break;
+      }
+    }
+
+    return current.isWord;
   }
 }
 
-// const trie = new Trie();
-// trie.addWord('boy');
-// trie.addWord('boycot');
-// trie.addWord('bro');
-// trie.addWord('broke');
-// trie.addWord('gems');
-// trie.addWord('germs');
-// trie.addWord('genuine');
-// console.log(trie);
-// console.log(trie.hasWord('boy'));
-// console.log(trie.print());
-// console.log(trie.getCompletions('g'));
+const trie = new Trie();
+trie.addWord('boy');
+trie.addWord('boycot');
+trie.addWord('bro');
+trie.addWord('broke');
+trie.addWord('gems');
+trie.addWord('germs');
+trie.addWord('genuine');
+trie.addWord('genuine');
+trie.addWord('genuine');
+console.log(trie);
+console.log(trie.hasWord('boy'));
+console.log(trie.hasWord('b.'));
+console.log(trie.print());
+console.log(trie.getCompletions('g'));
+console.log(trie.getCompletions('b'));
+console.log(trie.search('g'));
